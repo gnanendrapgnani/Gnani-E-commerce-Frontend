@@ -1,7 +1,7 @@
 import React from "react";
 
 function AuthLogin() {
-  return <div>AuthLogin</div>;
+  return <div>Login</div>;
 }
 
 export default AuthLogin;
