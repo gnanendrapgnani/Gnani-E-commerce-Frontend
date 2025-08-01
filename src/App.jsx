@@ -13,19 +13,38 @@ import ShoppingHome from "./pages/shopping-view/home";
 import ShoppingList from "./pages/shopping-view/listing";
 import ShoppingCheckout from "./pages/shopping-view/checkout";
 import ShoppingAccount from "./pages/shopping-view/account";
+import CheckAuth from "./components/common/checkauth";
+import UnAuthPage from "./pages/unauth-page";
 
 function App() {
+  const isAuthenticted = true;
+  const user = { name: "gnani", role: "user" };
+
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
         {/* Auth related route */}
-        <Route path="/auth" element={<AuthLayout />}>
+        <Route
+          path="/auth"
+          element={
+            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+              <AuthLayout />
+            </CheckAuth>
+          }
+        >
           <Route path="login" element={<AuthLogin />} />
           <Route path="register" element={<AuthRegister />} />
         </Route>
 
         {/* Admin related Route */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+              <AdminLayout />
+            </CheckAuth>
+          }
+        >
           <Route path="dashboard" element={<AdminDashBoard />} />
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
@@ -33,7 +52,14 @@ function App() {
         </Route>
 
         {/* Shopping Related Route */}
-        <Route path="/shop" element={<ShoppingLayout />}>
+        <Route
+          path="/shop"
+          element={
+            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+              <ShoppingLayout />
+            </CheckAuth>
+          }
+        >
           <Route path="home" element={<ShoppingHome />} />
           <Route path="listing" element={<ShoppingList />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
@@ -42,6 +68,7 @@ function App() {
 
         {/* Route For Not Found */}
         <Route path="*" element={<NotFound />} />
+        <Route path="/unauth-page" element={<UnAuthPage />} />
       </Routes>
     </div>
   );
