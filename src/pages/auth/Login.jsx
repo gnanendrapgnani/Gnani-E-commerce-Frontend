@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import CommonForm from "../../components/common/form";
 import { loginFromControls } from "../../config";
+import { useDispatch } from "react-redux";
+import { loginUser } from "../../store/auth-slice";
+import { toast } from "sonner";
 
 const initialState = {
   userName: "",
@@ -11,8 +14,19 @@ const initialState = {
 
 function AuthLogin() {
   const [formData, setFromData] = useState(initialState);
+  const dispatch = useDispatch();
 
-  function onSubmit() {}
+  function onSubmit(e) {
+    e.preventDefault();
+
+    dispatch(loginUser(formData)).then((data) => {
+      if (data?.payload?.success) {
+        return toast.success(data?.payload?.message);
+      } else {
+        return toast.error(data?.payload?.message);
+      }
+    });
+  }
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">

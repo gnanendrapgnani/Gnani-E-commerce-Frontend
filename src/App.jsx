@@ -15,10 +15,10 @@ import ShoppingCheckout from "./pages/shopping-view/checkout";
 import ShoppingAccount from "./pages/shopping-view/account";
 import CheckAuth from "./components/common/checkauth";
 import UnAuthPage from "./pages/unauth-page";
+import { useSelector } from "react-redux";
 
 function App() {
-  const isAuthenticted = false;
-  const user = { name: "gnani", role: "user" };
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
@@ -27,7 +27,7 @@ function App() {
         <Route
           path="/auth"
           element={
-            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+            <CheckAuth isAuthenticted={isAuthenticated} user={user}>
               <AuthLayout />
             </CheckAuth>
           }
@@ -40,7 +40,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+            <CheckAuth isAuthenticted={isAuthenticated} user={user}>
               <AdminLayout />
             </CheckAuth>
           }
@@ -55,7 +55,7 @@ function App() {
         <Route
           path="/shop"
           element={
-            <CheckAuth isAuthenticted={isAuthenticted} user={user}>
+            <CheckAuth isAuthenticted={isAuthenticated} user={user}>
               <ShoppingLayout />
             </CheckAuth>
           }
