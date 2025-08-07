@@ -26,6 +26,7 @@ function AdminProducts() {
   const [fromData, setFromData] = useState(initialFromData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
 
   function onSubmit() {}
 
@@ -54,6 +55,8 @@ function AdminProducts() {
             setImageFile={setImageFile}
             uploadedImageUrl={uploadedImageUrl}
             setUploadedImageUrl={setUploadedImageUrl}
+            setIsLoadingImage={setIsLoadingImage}
+            isLoadingImage={isLoadingImage}
           />
           <div className="py-6">
             <CommonForm
