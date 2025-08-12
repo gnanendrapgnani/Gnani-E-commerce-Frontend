@@ -15,6 +15,7 @@ import {
   fetchAllProducts,
 } from "../../store/admin/product-slice";
 import { toast } from "sonner";
+import AdminProductTile from "./product-tile";
 
 const initialFromData = {
   image: null,
@@ -72,7 +73,13 @@ function AdminProducts() {
           Add New Product
         </Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4"></div>
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {productList && productList.length > 0
+          ? productList.map((productItem) => (
+              <AdminProductTile product={productItem} />
+            ))
+          : null}
+      </div>
       <Sheet
         open={openCreateProductDialog}
         onOpenChange={() => setOpenCreateProductDialog(false)}
