@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import {
   Sheet,
@@ -9,6 +9,12 @@ import {
 import CommonForm from "../../components/common/form";
 import { addProductFormElements } from "../../config";
 import ProductImageUpload from "./image-upload";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addNewProduct,
+  fetchAllProducts,
+} from "../../store/admin/product-slice";
+import { toast } from "sonner";
 
 const initialFromData = {
   image: null,
@@ -27,8 +33,33 @@ function AdminProducts() {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const { productList } = useSelector((state) => state.adminProducts);
+  const dispatch = useDispatch();
 
-  function onSubmit() {}
+  function onSubmit(e) {
+    e.preventDefault();
+    dispatch(
+      addNewProduct({
+        ...fromData,
+        image: uploadedImageUrl,
+      })
+    ).then((data) => {
+      console.log(data);
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts());
+        setOpenCreateProductDialog(false);
+        setImageFile(null);
+        setFromData(initialFromData);
+        toast.success("Product added Successfully");
+      }
+    });
+  }
+
+  useEffect(() => {
+    dispatch(fetchAllProducts());
+  }, [dispatch]);
+
+  console.log(productList, "fromData");
 
   return (
     <Fragment>
