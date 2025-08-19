@@ -6,8 +6,9 @@ function AdminProductTile({
   setCurrentEditedId,
   setOpenCreateProductDialog,
   setFromData,
+  handleDelete,
 }) {
-  console.log(product, "from AdminProduct");
+  // console.log(product, "from AdminProduct");
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div>
@@ -28,11 +29,8 @@ function AdminProductTile({
             >
               ₹ {product?.price}
             </span>
-            {product?.price > 0 ? (
-              <span className="text-lg font-bold ">
-                {" "}
-                ₹ {product?.salePrice}
-              </span>
+            {product?.salePrice > 0 ? (
+              <span className="text-lg font-bold ">₹ {product?.salePrice}</span>
             ) : null}
           </div>
         </CardContent>
@@ -46,7 +44,7 @@ function AdminProductTile({
           >
             Edit
           </Button>
-          <Button>Delete</Button>
+          <Button onClick={() => handleDelete(product?._id)}>Delete</Button>
         </CardFooter>
       </div>
     </Card>

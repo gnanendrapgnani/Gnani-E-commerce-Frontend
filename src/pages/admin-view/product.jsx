@@ -12,6 +12,7 @@ import ProductImageUpload from "./image-upload";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewProduct,
+  deleteProduct,
   editProduct,
   fetchAllProducts,
 } from "../../store/admin/product-slice";
@@ -45,7 +46,7 @@ function AdminProducts() {
     currentEditedId !== null
       ? dispatch(editProduct({ id: currentEditedId, fromData })).then(
           (data) => {
-            console.log(data, "edtited ");
+            // console.log(data, "edtited ");
             if (data?.payload?.success) {
               dispatch(fetchAllProducts());
               setFromData(initialFromData);
@@ -60,7 +61,7 @@ function AdminProducts() {
             image: uploadedImageUrl,
           })
         ).then((data) => {
-          console.log(data);
+          // console.log(data);
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
             setOpenCreateProductDialog(false);
@@ -71,11 +72,26 @@ function AdminProducts() {
         });
   }
 
+  function handleDelete(getCurrentProductID) {
+    console.log(getCurrentProductID);
+    dispatch(deleteProduct(getCurrentProductID)).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts());
+      }
+    });
+  }
+
+  function isFromValid() {
+    return Object.keys(fromData)
+      .map((key) => fromData[key] !== "")
+      .every((item) => item);
+  }
+
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
-  console.log(productList, "fromData");
+  // console.log(productList, "fromData");
 
   return (
     <Fragment>
@@ -96,6 +112,7 @@ function AdminProducts() {
                 setOpenCreateProductDialog={setOpenCreateProductDialog}
                 product={productItem}
                 setFromData={setFromData}
+                handleDelete={handleDelete}
               />
             ))
           : null}
@@ -130,6 +147,7 @@ function AdminProducts() {
               setFromData={setFromData}
               buttonText={currentEditedId !== null ? "Edit" : "ADD"}
               formControls={addProductFormElements}
+              isBtnDisabled={!isFromValid()}
             />
           </div>
         </SheetContent>
