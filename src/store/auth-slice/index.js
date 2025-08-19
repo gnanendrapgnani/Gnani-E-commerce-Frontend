@@ -11,7 +11,7 @@ export const registerUser = createAsyncThunk(
   "/auth/register",
   async (formData) => {
     const response = await axios.post(
-      "http://localhost:3000/api/auth/register",
+      `${import.meta.env.VITE_BASE_URL}/auth/register`,
       formData,
       { withCredentials: true }
     );
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
 
 export const checkAuth = createAsyncThunk("/auth/check-auth", async () => {
   const response = await axios.get(
-    "http://localhost:3000/api/auth/check-auth",
+    `${import.meta.env.VITE_BASE_URL}/auth/check-auth`,
     {
       withCredentials: true,
       headers: {
@@ -36,11 +36,22 @@ export const checkAuth = createAsyncThunk("/auth/check-auth", async () => {
 
 export const loginUser = createAsyncThunk("/auth/login", async (formData) => {
   const response = await axios.post(
-    "http://localhost:3000/api/auth/login",
+    `${import.meta.env.VITE_BASE_URL}/auth/login`,
     formData,
     { withCredentials: true }
   );
   return response.data;
+});
+
+export const logoutUser = createAsyncThunk("/auth/logout", async () => {
+  const res = await axios.post(
+    `${import.meta.env.VITE_BASE_URL}/auth/logout`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+  return res.data;
 });
 
 const authSlice = createSlice({
@@ -86,6 +97,11 @@ const authSlice = createSlice({
         state.isAuthenticated = action.payload.success;
       })
       .addCase(checkAuth.rejected, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;

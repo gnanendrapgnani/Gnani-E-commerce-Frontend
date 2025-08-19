@@ -77,6 +77,7 @@ function AdminProducts() {
     dispatch(deleteProduct(getCurrentProductID)).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchAllProducts());
+        toast.success("Product deleted successfully");
       }
     });
   }
