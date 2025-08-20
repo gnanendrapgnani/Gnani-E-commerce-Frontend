@@ -1,17 +1,19 @@
-import { House, Menu, ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { House, LogOut, Menu, ShoppingCart, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "../../config";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { logoutUser } from "../../store/auth-slice";
 
 function MenuItems() {
   return (
@@ -31,6 +33,13 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    dispatch(logoutUser());
+  }
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
       <Button variant="outline" size="icon">
@@ -48,6 +57,15 @@ function HeaderRightContent() {
         <DropdownMenuContent side="right" className="w-56">
           <DropdownMenuLabel>Logged is as {user?.userName}</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate("/shop/account")}>
+            <User className="mr-2 h-4 w-4" />
+            Account
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -78,11 +96,10 @@ function ShoppingHeader() {
         <div className="lg:block hidden">
           <MenuItems />
         </div>
-        {isAuthenticated ? (
-          <div>
-            <HeaderRightContent />
-          </div>
-        ) : null}
+
+        <div className="hidden lg:block">
+          <HeaderRightContent />
+        </div>
       </div>
     </header>
   );
