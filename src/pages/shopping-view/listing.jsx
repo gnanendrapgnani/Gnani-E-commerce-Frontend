@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ProductFilter from "../../components/filter";
 import {
   DropdownMenu,
@@ -10,8 +10,12 @@ import {
 import { Button } from "../../components/ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
 import { sortoptions } from "../../config";
+import { useDispatch } from "react-redux";
+import { fetchAllProducts } from "../../store/admin/product-slice";
 
 function ShoppingList() {
+  const dispatch = useDispatch();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter />
@@ -42,6 +46,9 @@ function ShoppingList() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
+          <ShoppingProductTile />
         </div>
       </div>
     </div>
