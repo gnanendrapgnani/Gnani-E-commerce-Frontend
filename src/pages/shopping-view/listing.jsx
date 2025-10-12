@@ -23,6 +23,8 @@ function createSearchParamsHelper(filterParmes){
       querParms.push(`${key}=${encodeURIComponent(paramValue)}`)
     }
   }
+
+  console.log(querParms, "wueris")
   return querParms.join("&")
 }
 
@@ -38,7 +40,7 @@ function ShoppingList() {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  console.log(productList, filters, searchParams)
+  // console.log(productList, filters, searchParams)
 
   function handleSort(value){
     console.log(value);
@@ -83,7 +85,7 @@ function ShoppingList() {
 
   useEffect(() => {
     if(filters !==null && sort !== null){
-      console.log("lsist",filters, sort)
+      // console.log("lsist",filters, sort)
     dispatch(fetchAllFilterdProdut({filterParams:filters, sortParams:sort}));
   }
   }, [dispatch, sort, filters]);

@@ -14,10 +14,14 @@ export const fetchAllFilterdProdut = createAsyncThunk(
       ...filterParams,
       sortBy: sortParams
     })
+
+    console.log(query)
     const res = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/admin/products/get?${query}`
+      `${import.meta.env.VITE_BASE_URL}/shop/products/get?${query}`
     );
 
+
+    // console.log("filtered  Product ",res?.data)
     return res?.data;
   }
 );
