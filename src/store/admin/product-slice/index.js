@@ -10,7 +10,7 @@ export const addNewProduct = createAsyncThunk(
   "/products/addnewproduct",
   async (fromData) => {
     const res = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}admin/products/add`,
+      `${import.meta.env.VITE_BASE_URL}/admin/products/add`,
       fromData,
       {
         headers: {
@@ -72,13 +72,14 @@ const AdminProductsSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
-        console.log(state);
+        
         state.isLoading = false;
         state.productList = action.payload.data;
       }).addCase.rejected,
       (fetchAllProducts.rejected,
       (state, action) => {
-        (state.isLoading = false), (state.productList = []);
+        state.isLoading = false; 
+        state.productList = [];
       });
   },
 });

@@ -44,13 +44,9 @@ export const loginUser = createAsyncThunk("/auth/login", async (formData) => {
 });
 
 export const logoutUser = createAsyncThunk("/auth/logout", async () => {
-  const res = await axios.post(
-    `${import.meta.env.VITE_BASE_URL}/auth/logout`,
-    {},
-    {
-      withCredentials: true,
-    }
-  );
+  const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
+    withCredentials: true,
+  });
   return res.data;
 });
 
