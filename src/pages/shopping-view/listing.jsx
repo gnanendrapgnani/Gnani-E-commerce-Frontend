@@ -12,8 +12,9 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { sortoptions } from "../../config";
 import { useDispatch, useSelector } from "react-redux";
 import ShoppingProductTile from "../../components/shopping-view/product-tile";
-import { fetchAllFilterdProdut } from "../../store/shop/product-slice";
+import { fetchAllFilterdProdut, fetchProdutDetails } from "../../store/shop/product-slice";
 import {  useSearchParams } from "react-router-dom";
+import ProductDetailsDilog from "../../components/shopping-view/product-details";
 
 function createSearchParamsHelper(filterParmes){
   const querParms = [];
@@ -33,11 +34,12 @@ function ShoppingList() {
 
   
   const dispatch = useDispatch();
-  const { productList } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails } = useSelector((state) => state.shopProducts);
   
   const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState(null)
-
+  const [sort, setSort] = useState(null);
+  const [open, setOpen] = useState(false);
+  
   const [searchParams, setSearchParams] = useSearchParams()
 
   // console.log(productList, filters, searchParams)
@@ -71,6 +73,11 @@ function ShoppingList() {
     sessionStorage.setItem('filters', JSON.stringify(cpyFilter))
   }
 
+  function handleGetProductDetails (getCurrentProductID) {
+    console.log(getCurrentProductID)
+    dispatch(fetchProdutDetails(getCurrentProductID))
+  }
+
   useEffect(()=>{
     setSort("price-lowtohigh")
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {})
@@ -81,7 +88,11 @@ function ShoppingList() {
       const createQueryString = createSearchParamsHelper(filters)
       setSearchParams(new URLSearchParams(createQueryString))
     }
-  },[filters])
+  },[filters]);
+
+  useEffect(()=>{
+     if(productDetails !== null) setOpen(true)
+  },[productDetails])
 
   useEffect(() => {
     if(filters !==null && sort !== null){
@@ -89,6 +100,8 @@ function ShoppingList() {
     dispatch(fetchAllFilterdProdut({filterParams:filters, sortParams:sort}));
   }
   }, [dispatch, sort, filters]);
+
+  console.log("Select Product", productDetails)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
@@ -124,11 +137,12 @@ function ShoppingList() {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile product={productItem} />
+                <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem} />
               ))
             : null}
         </div>
       </div>
+      <ProductDetailsDilog open={open} setOpen={setOpen} productDetails={productDetails} />
     </div>
   );
 }
