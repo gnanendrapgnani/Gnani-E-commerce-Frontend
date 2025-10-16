@@ -12,105 +12,129 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { sortoptions } from "../../config";
 import { useDispatch, useSelector } from "react-redux";
 import ShoppingProductTile from "../../components/shopping-view/product-tile";
-import { fetchAllFilterdProdut, fetchProdutDetails } from "../../store/shop/product-slice";
-import {  useSearchParams } from "react-router-dom";
+import {
+  fetchAllFilterdProdut,
+  fetchProdutDetails,
+} from "../../store/shop/product-slice";
+import { useSearchParams } from "react-router-dom";
 import ProductDetailsDilog from "../../components/shopping-view/product-details";
+import { addToCart, fetchCartItems } from "../../store/shop/cart";
+import { toast } from "sonner";
 
-function createSearchParamsHelper(filterParmes){
+function createSearchParamsHelper(filterParmes) {
   const querParms = [];
-  for(const [key, value] of Object.entries(filterParmes)){
-    if (Array.isArray(value) && value.length > 0){
-      const paramValue = value.join(",")
-      querParms.push(`${key}=${encodeURIComponent(paramValue)}`)
+  for (const [key, value] of Object.entries(filterParmes)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramValue = value.join(",");
+      querParms.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
 
-  console.log(querParms, "wueris")
-  return querParms.join("&")
+  console.log(querParms, "wueris");
+  return querParms.join("&");
 }
 
-
 function ShoppingList() {
-
-  
   const dispatch = useDispatch();
-  const { productList, productDetails } = useSelector((state) => state.shopProducts);
-  
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
+  const { user } = useSelector((state) => state.auth);
+
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
   const [open, setOpen] = useState(false);
-  
-  const [searchParams, setSearchParams] = useSearchParams()
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // console.log(productList, filters, searchParams)
 
-  function handleSort(value){
+  function handleSort(value) {
     console.log(value);
-    setSort(value)
+    setSort(value);
   }
 
-  function handlefilter (getSectionId, getCurrentOption){
-    console.log(getSectionId, getCurrentOption)
-    let cpyFilter = {...filters}
-    const indexOfCurrentSection = Object.keys(cpyFilter).indexOf(getSectionId)
+  function handlefilter(getSectionId, getCurrentOption) {
+    console.log(getSectionId, getCurrentOption);
+    let cpyFilter = { ...filters };
+    const indexOfCurrentSection = Object.keys(cpyFilter).indexOf(getSectionId);
 
-    if (indexOfCurrentSection === -1){
-      cpyFilter={
+    if (indexOfCurrentSection === -1) {
+      cpyFilter = {
         ...cpyFilter,
-        [getSectionId]:[getCurrentOption]
-      }
-    }else{
-      const indexOfCurrentOption = cpyFilter[getSectionId].indexOf(getCurrentOption);
-      if(indexOfCurrentOption === -1){
-        cpyFilter[getSectionId].push(getCurrentOption)
-      } else{
-        cpyFilter[getSectionId].splice(indexOfCurrentOption, 1)
+        [getSectionId]: [getCurrentOption],
+      };
+    } else {
+      const indexOfCurrentOption =
+        cpyFilter[getSectionId].indexOf(getCurrentOption);
+      if (indexOfCurrentOption === -1) {
+        cpyFilter[getSectionId].push(getCurrentOption);
+      } else {
+        cpyFilter[getSectionId].splice(indexOfCurrentOption, 1);
       }
     }
 
     console.log(cpyFilter);
     setFilters(cpyFilter);
-    sessionStorage.setItem('filters', JSON.stringify(cpyFilter))
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilter));
   }
 
-  function handleGetProductDetails (getCurrentProductID) {
-    console.log(getCurrentProductID)
-    dispatch(fetchProdutDetails(getCurrentProductID))
+  function handleGetProductDetails(getCurrentProductID) {
+    console.log(getCurrentProductID);
+    dispatch(fetchProdutDetails(getCurrentProductID));
   }
 
-  useEffect(()=>{
-    setSort("price-lowtohigh")
-    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {})
-  },[])
-
-  useEffect(()=>{
-    if(filters && Object.keys(filters).length > 0){
-      const createQueryString = createSearchParamsHelper(filters)
-      setSearchParams(new URLSearchParams(createQueryString))
-    }
-  },[filters]);
-
-  useEffect(()=>{
-     if(productDetails !== null) setOpen(true)
-  },[productDetails])
+  function handleAddtoCart(getCurrentProductId) {
+    console.log(getCurrentProductId);
+    dispatch(
+      addToCart({
+        userId: user?.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user?.id));
+        toast.success("Product is Added to Cart")
+      }
+    });
+  }
 
   useEffect(() => {
-    if(filters !==null && sort !== null){
-      // console.log("lsist",filters, sort)
-    dispatch(fetchAllFilterdProdut({filterParams:filters, sortParams:sort}));
-  }
-  }, [dispatch, sort, filters]);
+    setSort("price-lowtohigh");
+    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
+  }, []);
 
-  console.log("Select Product", productDetails)
+  useEffect(() => {
+    if (filters && Object.keys(filters).length > 0) {
+      const createQueryString = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(createQueryString));
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (productDetails !== null) setOpen(true);
+  }, [productDetails]);
+
+  useEffect(() => {
+    if (filters !== null && sort !== null) {
+      // console.log("lsist",filters, sort)
+      dispatch(
+        fetchAllFilterdProdut({ filterParams: filters, sortParams: sort })
+      );
+    }
+  }, [dispatch, sort, filters]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
-      <ProductFilter filters={filters} handleFilter={handlefilter}  />
+      <ProductFilter filters={filters} handleFilter={handlefilter} />
       <div className="bg-background w-full rounded-lg shadow-sm">
         <div className="p-4 border-b flex  items-center justify-between">
           <h2 className="text-lg font-extrabold">All Product</h2>
           <div className="flex items-center gap-3">
-            <span className="text-muted-foreground">{productList.length} Products</span>
+            <span className="text-muted-foreground">
+              {productList.length} Products
+            </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -125,7 +149,10 @@ function ShoppingList() {
               <DropdownMenuContent align="end" className="w-[200px]">
                 <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
                   {sortoptions.map((sortItem) => (
-                    <DropdownMenuRadioItem value={sortItem.id} key={sortItem.id}>
+                    <DropdownMenuRadioItem
+                      value={sortItem.id}
+                      key={sortItem.id}
+                    >
                       {sortItem.label}
                     </DropdownMenuRadioItem>
                   ))}
@@ -137,12 +164,20 @@ function ShoppingList() {
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 p-4">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile handleGetProductDetails={handleGetProductDetails} product={productItem} />
+                <ShoppingProductTile
+                  handleAddtoCart={handleAddtoCart}
+                  handleGetProductDetails={handleGetProductDetails}
+                  product={productItem}
+                />
               ))
             : null}
         </div>
       </div>
-      <ProductDetailsDilog open={open} setOpen={setOpen} productDetails={productDetails} />
+      <ProductDetailsDilog
+        open={open}
+        setOpen={setOpen}
+        productDetails={productDetails}
+      />
     </div>
   );
 }

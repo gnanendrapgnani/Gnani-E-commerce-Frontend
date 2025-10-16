@@ -14,6 +14,9 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser } from "../../store/auth-slice";
+import { useEffect, useState } from "react";
+import UserCartWrapper from "./cart-wrapper";
+import { fetchCartItems } from "../../store/shop/cart";
 
 function MenuItems() {
   return (
@@ -33,6 +36,8 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
+  const { cartItems } = useSelector((state) => state.shopCart);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -40,9 +45,40 @@ function HeaderRightContent() {
     dispatch(logoutUser());
   }
 
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id));
+  }, [dispatch]);
+
+  console.log("Cart Items", cartItems.items);
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <div className="relative">
+          <Button
+            onClick={() => setOpenCartSheet(true)}
+            variant="outline"
+            size="icon"
+          >
+            <ShoppingCart className="h-6 w-6" />
+            {/* <span>Cart</span> */}
+          </Button>
+          {cartItems?.items && cartItems && cartItems?.items.length > 0 ? (
+            
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center"> {cartItems?.items.length}</span>
+        
+          ) : null}
+        </div>
+
+        <UserCartWrapper
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
+      </Sheet>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black">
