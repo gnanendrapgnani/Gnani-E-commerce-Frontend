@@ -1,7 +1,8 @@
 import { Minus, Plus, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCartItems, fetchCartItems } from "../../store/shop/cart";
+import { deleteCartItems, fetchCartItems, updateCartQuantity } from "../../store/shop/cart";
+import { toast } from "sonner";
 
 function UserCartItemsContent({ cartItems }) {
 
@@ -14,9 +15,16 @@ function UserCartItemsContent({ cartItems }) {
 
     dispatch(deleteCartItems({userId: user?.id, productId:items.productId})).then((data)=>{
       
-      
       if(data.payload.success){
         dispatch(fetchCartItems(user?.id))
+      }
+    })
+  }
+
+  const handleUpdateQuantity = async(items, typeAction)=>{
+    dispatch(updateCartQuantity({userId: user?.id, productId: items?.productId, quantity: typeAction === "plus" ? items?.quantity + 1 : items?.quantity - 1} )).then((data)=> {
+      if(data.payload.success){
+        toast.success("Cart Item is updated successfully")
       }
     })
   }
@@ -35,6 +43,8 @@ function UserCartItemsContent({ cartItems }) {
             className="w-8 h-8 rounded-full"
             variant="outline"
             size="icon"
+            disabled = {cartItems?.quantity === 1}
+            onClick={()=>handleUpdateQuantity(cartItems, "minus")}
           >
             <Minus className="w-4 h-4" />
             <span className="sr-only"> Decrease</span>
@@ -46,6 +56,7 @@ function UserCartItemsContent({ cartItems }) {
             className="w-8 h-8 rounded-full"
             variant="outline"
             size="icon"
+            onClick={()=>handleUpdateQuantity(cartItems, "plus")}
           >
             <Plus className="w-4 h-4" />
             <span className="sr-only"> Increase</span>

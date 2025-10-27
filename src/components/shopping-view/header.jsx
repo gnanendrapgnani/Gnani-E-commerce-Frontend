@@ -17,18 +17,32 @@ import { logoutUser } from "../../store/auth-slice";
 import { useEffect, useState } from "react";
 import UserCartWrapper from "./cart-wrapper";
 import { fetchCartItems } from "../../store/shop/cart";
+import { Label } from "../ui/label";
 
 function MenuItems() {
+
+  const naviagte = useNavigate()
+
+  function handleNavigate (getCurrentItem){
+    sessionStorage.removeItem('filters')
+    const currentFilter = getCurrentItem.id !== "home" ? {
+      category : [getCurrentItem.id]
+    } : null
+    sessionStorage.setItem('filters', JSON.stringify(currentFilter));
+    naviagte(getCurrentItem.path)
+  }
+
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
-        <Link
+        <Label
           key={menuItem.id}
           to={menuItem.path}
-          className="text-sm font-medium"
+          className="text-sm font-medium cursor-pointer"
+          onClick = {()=>{handleNavigate(menuItem)}}
         >
           {menuItem.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );
