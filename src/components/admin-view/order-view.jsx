@@ -1,12 +1,20 @@
-import { Dialog } from "@radix-ui/react-dialog";
-import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Button } from "../ui/button";
+import { Dialog } from "../ui/dialog";
 import { useState } from "react";
-import ShopOrderDetaisView from "./order-details";
+import AdminOrderDetailsView from "./order-details";
 
-function ShoppingOrders() {
+const AdminOrderView = () => {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -15,14 +23,15 @@ function ShoppingOrders() {
 
       <CardContent>
         <Table>
-
-        <TableHeader>
+          <TableHeader>
             <TableRow>
               <TableHead>Order Id</TableHead>
               <TableHead>Order Date</TableHead>
               <TableHead>Order Status</TableHead>
               <TableHead>Order Price</TableHead>
-              <TableHead><span className="sr-only">Detail</span></TableHead>
+              <TableHead>
+                <span className="sr-only">Detail</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
 
@@ -33,22 +42,20 @@ function ShoppingOrders() {
               <TableCell>pending</TableCell>
               <TableCell>799</TableCell>
               <TableCell>
-              <Dialog
+                <Dialog
                   open={openDetailsDialog}
                   onOpenChange={setOpenDetailsDialog}
                 >
                   <Button onClick = {()=>setOpenDetailsDialog(true)}>View Details</Button>
-                  <ShopOrderDetaisView />
+                  <AdminOrderDetailsView />
                 </Dialog>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
-
-
       </CardContent>
     </Card>
   );
-}
+};
 
-export default ShoppingOrders;
+export default AdminOrderView;

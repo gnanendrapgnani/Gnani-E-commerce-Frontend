@@ -1,29 +1,11 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table";
+import AdminOrderView from "../../components/admin-view/order-view";
+
 
 function AdminOrders() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All Orders</CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <Table>
-          
-        </Table>
-      </CardContent>
-    </Card>
+<div> 
+  <AdminOrderView />
+</div>
   );
 }
 
