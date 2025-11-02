@@ -15,7 +15,8 @@ const initialAddressFormData = {
   notes: "",
 };
 
-function Address() {
+function Address({selectedAddress,
+setSelectedAddress}) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { addressList } = useSelector((state) => state.shopAddress);
@@ -90,6 +91,8 @@ function Address() {
                 addressInfo={singleAddressItem}
                 handleAddressDelete={handleDeleteAddress}
                 handleEditAddress = {handleEditAddress}
+                selectedAddress={selectedAddress}
+setSelectedAddress = {setSelectedAddress}
               />
             ))
           : null}
